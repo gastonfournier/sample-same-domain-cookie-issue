@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unleash Proxy Client Example</title>
+    <script src="https://unpkg.com/unleash-proxy-client@latest/build/main.min.js" type="text/javascript"></script>
+</head>
+<body>
+    <h1>Welcome to the Feature Flag Demo Page</h1>
+    <div id="feature-status">waiting for feature flag "test" status</div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Configure the Unleash Proxy client
+            const unleashClient = new unleash.UnleashClient({
+                url: 'http://127.0.0.1:8080/unleash/api/frontend', // URL to the Unleash proxy
+                clientKey: 'default:development.unleash-frontend-api-insecure-token',
+                appName: 'frontend-app-test',
+                environment: 'development'
+            });
+            
+
+            // Start the Unleash Proxy client
+            unleashClient.start();
+
+            // Listen for the ready event
+            unleashClient.on('ready', () => {
+                // Once the client is ready, check a feature toggle
+                const isFeatureEnabled = unleashClient.isEnabled('test');
+
+                const featureStatus = document.getElementById('feature-status');
+                featureStatus.textContent = isFeatureEnabled
+                    ? 'The feature flag "test" is enabled!'
+                    : 'The feature flag "test" is disabled.';
+            });
+
+            // Optionally, listen for updates to feature toggles
+            unleashClient.on('update', () => {
+                console.log('Feature flags have been updated.');
+            });
+        });
+    </script>
+</body>
+</html>
